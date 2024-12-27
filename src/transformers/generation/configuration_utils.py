@@ -1285,7 +1285,15 @@ class GenerationConfig(PushToHubMixin):
         decoder_config = model_config.get_text_config(decoder=True)
         if decoder_config is not model_config:
             default_generation_config = GenerationConfig()
-            decoder_config_dict = decoder_config.to_dict()
+
+            # ====================================================================
+            # chek if decoder_config is already a dictionary
+            if isinstance(decoder_config, dict):
+                decoder_config_dict = decoder_config
+            else: # convert decoder_config to dictionary
+                decoder_config_dict = decoder_config.to_dict()
+            # ====================================================================
+            
             for attr in generation_config.to_dict().keys():
                 is_unset = getattr(generation_config, attr) == getattr(default_generation_config, attr)
                 if attr in decoder_config_dict and is_unset:
