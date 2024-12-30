@@ -2059,7 +2059,17 @@ class PreTrainedModel(nn.Module, ModuleUtilsMixin, GenerationMixin, PushToHubMix
             vocab_size = model_embeds.weight.shape[0]
 
         # Update base model and current model config.
-        self.config.get_text_config().vocab_size = vocab_size
+        # self.config.get_text_config().vocab_size = vocab_size
+        text_config = self.config.get_text_config()
+
+        # ======================================================================================
+        if isinstance(text_config, dict): 
+            # Handle dictionary-based models
+            text_config['vocab_size'] = vocab_size
+        elif hasattr(text_config, 'vocab_size'): 
+            # Handle object-based models with vocab_size as an attribute
+            text_config.vocab_size = vocab_size
+        
         self.vocab_size = vocab_size
 
         # Tie weights again if needed
